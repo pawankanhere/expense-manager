@@ -57,7 +57,7 @@ export function AddExpenseForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-3 mt-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-3 mt-2 xl:mt-4">
         <FormField
           control={form.control}
           name="date"
@@ -70,16 +70,16 @@ export function AddExpenseForm() {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-full pl-3 text-xs text-left font-normal",
+                        "w-full pl-3 text-xs text-left font-normal xl:text-base xl:h-12",
                         !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50 2xl:h-6 2xl:w-6" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-full p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={field.value ? new Date(field.value) : undefined}
@@ -111,7 +111,7 @@ export function AddExpenseForm() {
                         variant="outline"
                         role="combobox"
                         className={cn(
-                          "w-full text-xs text-gray-700 justify-between",
+                          "w-full text-xs text-gray-700 justify-between xl:text-base xl:font-normal xl:h-12",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -133,14 +133,15 @@ export function AddExpenseForm() {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[240px] p-0">
-                    <Command>
+                  <PopoverContent className="w-full p-0">
+                    <Command className="w-[520px]">
                       <CommandInput placeholder="Search framework..." className="h-9" />
-                      <CommandList>
+                      <CommandList className="w-full">
                         <CommandEmpty>No framework found.</CommandEmpty>
-                        <CommandGroup>
+                        <CommandGroup className="w-full">
                           {expenseList?.map((list) => (
                             <CommandItem
+                              className="w-full"
                               value={list.transaction}
                               key={list.id}
                               onSelect={() => {
@@ -188,15 +189,15 @@ export function AddExpenseForm() {
             <FormItem className="grow-0 w-full">
               <FormLabel className="sr-only">Remark</FormLabel>
               <FormControl>
-                <Textarea placeholder="Remarks" {...field} />
+                <Textarea className="xl:text-base" placeholder="Remarks" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button className="w-full px-3" disabled={addExpenseMutation.isPending} type="submit">
+        <Button className="w-full px-3 xl:h-12" disabled={addExpenseMutation.isPending} type="submit">
           {addExpenseMutation.isPending ? <IconLoader className="animate-spin" /> : <IconPlus />}
-          <span className="ml-2 text-xs">Add Transaction</span>
+          <span className="ml-2 text-xs xl:text-base">Add Transaction</span>
         </Button>
       </form>
     </Form>

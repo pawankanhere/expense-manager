@@ -11,12 +11,14 @@ type OverviewProps = {
 }
 
 const Overview = ({ dates, expenses }: OverviewProps) => {
+  const excludeCategories = ["monthly scheduled", "yearly recurring", "monthly reserved"]
+  const dailyExpenses = expenses.filter((expense) => !excludeCategories.includes(expense.category))
   return (
     <>
       <h1 className="font-semibold 2xl:text-xl">Monthly Overview</h1>
       <div className="grid grid-cols-4 md:grid-cols-7 gap-1 mt-2 2xl:mt-4">
         {dates.map((date) => {
-          const filteredExpenses = expenses.filter((expense) => {
+          const filteredExpenses = dailyExpenses.filter((expense) => {
             const shortDate = expense.date.split("-").slice(0, 2).join("-")
             return shortDate === date
           })

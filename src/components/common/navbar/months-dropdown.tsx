@@ -14,6 +14,7 @@ import { useParams, useRouter } from "next/navigation"
 import { capitalize } from "lodash"
 import { toast } from "sonner"
 import { useChangeMonth } from "@/app/hooks"
+import { IconCalendarMonth } from "@tabler/icons-react"
 
 export function MonthsDropdown() {
   const params = useParams()
@@ -35,7 +36,8 @@ export function MonthsDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" className="xl:text-base xl:h-12 xl:rounded-xl">
+          <IconCalendarMonth className="text-gray-500 xl:text-base" />
           {capitalize(month)}
         </Button>
       </DropdownMenuTrigger>
