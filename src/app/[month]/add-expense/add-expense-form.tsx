@@ -16,6 +16,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
+import { useState } from "react"
 
 export const FormSchema = z.object({
   date: z.string().min(2, {
@@ -33,6 +34,8 @@ export const FormSchema = z.object({
 export function AddExpenseForm() {
   const expenseListQuery = useGetExpenseList()
   const expenseList = expenseListQuery.data?.data
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -64,7 +67,7 @@ export function AddExpenseForm() {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel className="sr-only">Transaction Date</FormLabel>
-              <Popover>
+              <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
@@ -87,6 +90,7 @@ export function AddExpenseForm() {
                       if (date) {
                         const fmtDate = format(date, "dd-MMM-yyyy")
                         field.onChange(fmtDate)
+                        setIsCalendarOpen(false)
                       }
                     }}
                     disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
@@ -147,6 +151,7 @@ export function AddExpenseForm() {
                               onSelect={() => {
                                 form.setValue("transaction", list.transaction)
                                 form.trigger("transaction")
+                                ;(document.querySelector('[role="combobox"]') as HTMLElement)?.click()
                               }}
                             >
                               {list.transaction}
