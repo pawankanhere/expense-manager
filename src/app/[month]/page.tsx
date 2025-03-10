@@ -24,7 +24,7 @@ const HomePage = async () => {
   return (
     <div>
       <Overview expenses={expenses} dates={dates} />
-      <ExpenseTable expenses={expenses} />
+      <ExpenseTable expenseData={expenses} />
     </div>
   )
 }
