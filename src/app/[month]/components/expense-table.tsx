@@ -1,16 +1,40 @@
-import React from "react"
+"use client"
+
+import React, { useEffect, useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Expense } from "../page"
 import { format } from "date-fns"
 import { convertToCurrency } from "@/lib/utils"
+import { useSearchParams } from "next/navigation"
 
 type ExpenseTableProps = {
-  expenses: Expense[]
+  expenseData: Expense[]
 }
-const ExpenseTable = ({ expenses }: ExpenseTableProps) => {
+const ExpenseTable = ({ expenseData }: ExpenseTableProps) => {
+  const [expenses, setExpenses] = useState(expenseData)
+  const [totalExpenses, setTotalExpenses] = useState(0)
+  const searchParams = useSearchParams()
+  const selectedDate = searchParams.get("date") || ""
+
+  useEffect(() => {
+    if (selectedDate) {
+      setExpenses(expenseData.filter((expense) => expense.date === selectedDate))
+    } else {
+      setExpenses(expenseData)
+    }
+  }, [selectedDate, expenseData])
+
+  useEffect(() => {
+    const total = expenses.reduce((acc, expense) => acc + expense.amount, 0)
+    setTotalExpenses(total)
+  }, [expenses])
+
   return (
     <div className="my-4 xl:my-6">
-      <h3 className="font-semibold 2xl:text-xl">Transactions Records</h3>
+      <div className="flex items-center gap-3">
+        <h3 className="font-semibold 2xl:text-xl">Transactions Records</h3>
+        <p className="text-gray-600 text-xs xl:text-base mt-0.5">Total: {convertToCurrency(totalExpenses)}</p>
+      </div>
       <Table className="xl:mt-2">
         <TableHeader>
           <TableRow>

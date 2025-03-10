@@ -33,7 +33,9 @@ export const FormSchema = z.object({
 
 export function AddExpenseForm() {
   const expenseListQuery = useGetExpenseList()
+  console.log("expenseListQuery", expenseListQuery)
   const expenseList = expenseListQuery.data?.data
+  console.log("expenseList", expenseList)
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -200,7 +202,14 @@ export function AddExpenseForm() {
             </FormItem>
           )}
         />
-        <Button className="w-full px-3 xl:h-12" disabled={addExpenseMutation.isPending} type="submit">
+        <Button
+          role="button"
+          data-testid="add-expense-form-submit-button"
+          className="w-full px-3 xl:h-12"
+          // disabled={addExpenseMutation.isPending}
+          disabled={true}
+          type="submit"
+        >
           {addExpenseMutation.isPending ? <IconLoader className="animate-spin" /> : <IconPlus />}
           <span className="ml-2 text-xs xl:text-base">Add Transaction</span>
         </Button>
