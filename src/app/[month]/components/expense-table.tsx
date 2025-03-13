@@ -30,29 +30,33 @@ const ExpenseTable = ({ expenseData }: ExpenseTableProps) => {
   }, [expenses])
 
   return (
-    <div className="my-4 xl:my-6">
+    <div className="my-4 sm:my-6">
       <div className="flex items-center gap-3">
-        <h3 className="font-semibold 2xl:text-xl">Transactions Records</h3>
-        <p className="text-gray-600 text-xs xl:text-base mt-0.5">Total: {convertToCurrency(totalExpenses)}</p>
+        <h3 className="font-semibold sm:text-lg 2xl:text-xl">Transactions Records</h3>
+        <p className="text-gray-600 text-xs sm:text-sm xl:text-base mt-0.5">
+          Total: {convertToCurrency(totalExpenses)}
+        </p>
       </div>
       <Table className="xl:mt-2">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-fit px-0 text-xs xl:text-base">Date</TableHead>
-            <TableHead className="w-[200px] px-0 text-xs xl:text-base">Transactions</TableHead>
-            <TableHead className="text-right text-xs xl:text-base">Amount</TableHead>
+            <TableHead className="w-fit px-0 text-xs sm:text-sm xl:text-base">Date</TableHead>
+            <TableHead className="w-[200px] px-0 text-xs sm:text-sm xl:text-base">Transactions</TableHead>
+            <TableHead className="text-right text-xs sm:text-sm xl:text-base">Amount</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {expenses.map((expense) => (
             <TableRow key={expense.id}>
-              <TableCell className="font-medium text-[12px] px-0 xl:text-base">
+              <TableCell className="font-medium text-[12px] px-0 sm:text-sm xl:text-base">
                 {format(new Date(expense.date), "dd MMM")}
               </TableCell>
-              <TableCell className="font-medium text-[12px] px-0 truncate xl:text-base">
+              <TableCell className="font-medium text-[12px] px-0 truncate sm:text-sm xl:text-base">
                 {expense.transaction}
               </TableCell>
-              <TableCell className="text-right text-[12px] xl:text-base">{convertToCurrency(expense.amount)}</TableCell>
+              <TableCell className="text-right text-[12px] sm:text-sm xl:text-base">
+                {convertToCurrency(expense.amount)}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -36,7 +36,7 @@ const Overview = ({ dates, expenses }: OverviewProps) => {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="font-semibold 2xl:text-xl">Monthly Overview</h1>
+        <h1 className="font-semibold sm:text-lg lg:text-xl">Monthly Overview</h1>
         <Button disabled={!searchParams.has("date")} variant="ghost" onClick={resetFilter}>
           <IconFilter />
           Reset Filters
@@ -64,13 +64,13 @@ const Overview = ({ dates, expenses }: OverviewProps) => {
               disabled={isFuture}
               className={twJoin(
                 colorClass,
-                "flex flex-col cursor-pointer font-medium text-[10px] rounded-lg justify-between p-1 px-2 xl:text-sm xl:font-regular",
+                "flex flex-col cursor-pointer font-medium text-[10px] rounded-lg justify-between p-1 px-2 sm:text-sm xl:text-sm xl:font-regular",
                 isFuture && "cursor-none",
                 "h-fit"
               )}
             >
               <p className="">{date}</p>
-              <p className="text-[12px] xl:text-base xl:font-medium">{convertToCurrency(totalAmount)}</p>
+              <p className="text-[12px] sm:text-sm xl:text-base xl:font-medium">{convertToCurrency(totalAmount)}</p>
             </Button>
           )
         })}

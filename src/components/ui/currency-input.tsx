@@ -19,7 +19,7 @@ const CurrencyInput = ({ placeholder, field }: CurrencyInputProps) => {
         {...field}
         placeholder={placeholder}
         customInput={Input}
-        className="border-0 -ml-2 mb-[2px] focus-visible:ring-0 xl:text-base"
+        className="border-0 -ml-2 mb-[2px] focus-visible:ring-0 sm-text-sm font-medium xl:text-base"
         thousandsGroupStyle="lakh"
         thousandSeparator=","
         type="text"

@@ -22,11 +22,19 @@ const Navbar = () => {
         <div className="flex justify-between items-center w-full">
           <MonthsDropdown />
           <div className="flex gap-2 items-center">
-            <Button onClick={onHomeClick} size="sm" className="xl:h-12 xl:px-4 xl:text-sm xl:rounded-xl">
+            <Button
+              onClick={onHomeClick}
+              size="sm"
+              className="xl:h-12 sm:rounded-lg sm:h-9 xl:px-4 sm:text-sm xl:text-sm xl:rounded-xl"
+            >
               <IconHome />
               Home
             </Button>
-            <Button onClick={onAddExpenseClick} size="sm" className="xl:h-12 xl:px-4 xl:text-sm xl:rounded-xl">
+            <Button
+              onClick={onAddExpenseClick}
+              size="sm"
+              className="xl:h-12 sm:rounded-lg sm:h-9 xl:px-4 sm:text-sm xl:text-sm xl:rounded-xl"
+            >
               <IconCalendarDollar />
               Add Expense
             </Button>

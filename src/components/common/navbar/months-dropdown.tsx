@@ -36,8 +36,8 @@ export function MonthsDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="sm" variant="outline" className="xl:text-base xl:h-12 xl:rounded-xl">
-          <IconCalendarMonth className="text-gray-500 xl:text-base" />
+        <Button size="sm" variant="outline" className="xl:text-base sm:text-sm sm:h-9 xl:h-12 xl:rounded-xl">
+          <IconCalendarMonth className="text-gray-500 sm:text-base" />
           {capitalize(month)}
         </Button>
       </DropdownMenuTrigger>
