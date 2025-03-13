@@ -7,6 +7,7 @@ import { twJoin } from "tailwind-merge"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { IconFilter } from "@tabler/icons-react"
+import { format, parse } from "date-fns"
 
 type OverviewProps = {
   dates: string[]
@@ -48,7 +49,11 @@ const Overview = ({ dates, expenses }: OverviewProps) => {
             const shortDate = expense.date.split("-").slice(0, 2).join("-")
             return shortDate === date
           })
-          const filterDate = filteredExpenses.length > 0 ? filteredExpenses[0].date : ""
+          const filterDate = format(
+            parse(`${date}-${new Date().getFullYear()}`, "dd-MMM-yyyy", new Date()),
+            "dd-MMM-yyyy"
+          )
+
           const totalAmount = filteredExpenses.reduce((acc, expense) => acc + expense.amount, 0)
           const isFuture = isFutureDate(date)
           const colorClass = isFuture

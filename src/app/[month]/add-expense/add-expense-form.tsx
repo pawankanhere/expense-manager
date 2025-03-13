@@ -33,9 +33,7 @@ export const FormSchema = z.object({
 
 export function AddExpenseForm() {
   const expenseListQuery = useGetExpenseList()
-  console.log("expenseListQuery", expenseListQuery)
   const expenseList = expenseListQuery.data?.data
-  console.log("expenseList", expenseList)
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
   const form = useForm<z.infer<typeof FormSchema>>({
