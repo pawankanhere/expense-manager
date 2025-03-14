@@ -5,6 +5,7 @@ import { vi, describe, it, expect, beforeEach, afterEach } from "vitest"
 import { useAddExpense, useGetExpenseList } from "@/app/hooks"
 import { format } from "date-fns"
 import { QueryClient, QueryClientProvider, UseMutationResult } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 // Define the types of our data and hooks
 type ExpenseData = {
@@ -136,68 +137,71 @@ describe("AddExpenseForm", () => {
     expect(screen.getByRole("combobox").textContent).toContain("Groceries")
   })
 
-  // it("submits the form with valid data", async () => {
-  //   const user = userEvent.setup()
-  //   renderWithClient(<AddExpenseForm />)
+  it("submits the form with valid data", async () => {
+    const user = userEvent.setup()
+    renderWithClient(<AddExpenseForm />)
 
-  //   await user.click(screen.getByRole("combobox"))
-  //   await waitFor(() => {
-  //     expect(screen.getByText("Groceries")).toBeDefined()
-  //   })
-  //   await user.click(screen.getByText("Groceries"))
-  //   await user.type(screen.getByPlaceholderText("Amount"), "100")
-  //   await user.type(screen.getByPlaceholderText("Remarks"), "Weekly groceries")
-  //   await user.click(screen.getByRole("button", { name: /Add Transaction/i }))
+    await user.click(screen.getByRole("combobox"))
+    await waitFor(() => {
+      expect(screen.getByText("Groceries")).toBeDefined()
+    })
+    await user.click(screen.getByText("Groceries"))
+    await user.type(screen.getByPlaceholderText("Amount"), "100")
+    await user.type(screen.getByPlaceholderText("Remarks"), "Weekly groceries")
+    await user.click(screen.getByRole("button", { name: /Add Transaction/i }))
 
-  //   await waitFor(() => {
-  //     expect(mockMutate).toHaveBeenCalledWith(
-  //       {
-  //         date: format(new Date(), "dd-MMM-yyyy"),
-  //         transaction: "Groceries",
-  //         amount: "100",
-  //         remarks: "Weekly groceries",
-  //       },
-  //       expect.any(Object)
-  //     )
-  //   })
-  // })
+    await waitFor(() => {
+      expect(mockMutate).toHaveBeenCalledWith(
+        {
+          date: format(new Date(), "dd-MMM-yyyy"),
+          transaction: "Groceries",
+          amount: "100",
+          remarks: "Weekly groceries",
+        },
+        expect.any(Object)
+      )
+    })
+  })
 
-  // it("displays loading state while submitting the form", () => {
-  //   vi.mocked(useAddExpense).mockReturnValue({
-  //     mutate: mockMutate,
-  //     isPending: true,
-  //   } as unknown as UseMutationResult<{ status: number }, Error, ExpenseData, unknown>)
+  it("displays loading state while submitting the form", () => {
+    vi.mocked(useAddExpense).mockReturnValue({
+      mutate: mockMutate,
+      isPending: true,
+    } as unknown as UseMutationResult<{ status: number }, Error, ExpenseData, unknown>)
 
-  //   renderWithClient(<AddExpenseForm />)
+    renderWithClient(<AddExpenseForm />)
 
-  //   const submitButton = screen.getByRole("button", { name: /Add Transaction/i })
-  //   expect((submitButton as HTMLButtonElement).disabled).toBe(true)
-  //   expect(submitButton.querySelector(".animate-spin")).toBeDefined()
-  // })
+    const submitButton = screen.getByRole("button", { name: /Add Transaction/i })
+    expect((submitButton as HTMLButtonElement).disabled).toBe(true)
+    expect(submitButton.querySelector(".animate-spin")).toBeDefined()
+  })
 
-  // it("shows success toast and resets form on successful submission", async () => {
-  //   vi.mocked(useAddExpense).mockImplementation(() => ({
-  //     mutate: (data, options) => {
-  //       if (options?.onSuccess) {
-  //         options.onSuccess()
-  //       }
-  //       return mockMutate(data, options)
-  //     },
-  //     isPending: false,
-  //   }))
+  it("shows success toast and resets form on successful submission", async () => {
+    const user = userEvent.setup()
+    vi.mocked(useAddExpense).mockImplementation(
+      () =>
+        ({
+          mutate: (data: ExpenseData, options: { onSuccess?: () => void }) => {
+            if (options?.onSuccess) {
+              options.onSuccess()
+            }
+            return mockMutate(data, options)
+          },
+          isPending: false,
+        } as unknown as UseMutationResult<{ status: number }, Error, ExpenseData, unknown>)
+    )
+    renderWithClient(<AddExpenseForm />)
 
-  //   renderWithClient(<AddExpenseForm />)
+    await user.click(screen.getByRole("combobox"))
+    await waitFor(async () => await user.click(screen.getByText("Groceries")))
+    await user.type(screen.getByPlaceholderText("Amount"), "100")
+    await user.click(screen.getByRole("button", { name: /Add Transaction/i }))
 
-  //   fireEvent.click(screen.getByRole("combobox"))
-  //   await waitFor(() => fireEvent.click(screen.getByText("Groceries")))
-  //   fireEvent.change(screen.getByPlaceholderText("Amount"), { target: { value: "100" } })
-  //   fireEvent.click(screen.getByRole("button", { name: /Add Transaction/i }))
-
-  //   await waitFor(() => {
-  //     expect(toast.success).toHaveBeenCalledWith("Transaction added successfully.")
-  //     expect(screen.getByRole("combobox").textContent).toContain("Select transaction")
-  //   })
-  // })
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith("Transaction added successfully.")
+      expect(screen.getByRole("combobox").textContent).toContain("Select transaction")
+    })
+  })
 
   it("selects a date from the calendar", async () => {
     const user = userEvent.setup()

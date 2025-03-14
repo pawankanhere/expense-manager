@@ -17,6 +17,7 @@ import { format } from "date-fns"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { useState } from "react"
+import Spinner from "@/components/common/spinner/spinner"
 
 export const FormSchema = z.object({
   date: z.string().min(2, {
@@ -56,7 +57,12 @@ export function AddExpenseForm() {
     })
   }
 
-  if (expenseListQuery.isLoading) return <div>Loading...</div>
+  if (expenseListQuery.isLoading)
+    return (
+      <div className="h-[96]">
+        <Spinner />
+      </div>
+    )
 
   return (
     <Form {...form}>
@@ -204,7 +210,7 @@ export function AddExpenseForm() {
           role="button"
           data-testid="add-expense-form-submit-button"
           className="w-full px-3 sm:h-9 xl:h-12"
-          disabled={true}
+          disabled={addExpenseMutation.isPending}
           type="submit"
         >
           {addExpenseMutation.isPending ? <IconLoader className="animate-spin" /> : <IconPlus />}
