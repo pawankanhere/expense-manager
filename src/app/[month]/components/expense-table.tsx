@@ -8,25 +8,36 @@ import { convertToCurrency } from "@/lib/utils"
 import { useSearchParams } from "next/navigation"
 
 type ExpenseTableProps = {
-  expenseData: Expense[]
+  expenseData?: Expense[]
 }
-const ExpenseTable = ({ expenseData }: ExpenseTableProps) => {
-  const [expenses, setExpenses] = useState(expenseData)
-  const [totalExpenses, setTotalExpenses] = useState(0)
+
+const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
+  const [expenses, setExpenses] = useState<Expense[]>(expenseData)
+  const [totalExpenses, setTotalExpenses] = useState<number>(0)
   const searchParams = useSearchParams()
   const selectedDate = searchParams.get("date") || ""
 
   useEffect(() => {
-    if (selectedDate) {
-      setExpenses(expenseData.filter((expense) => expense.date === selectedDate))
-    } else {
-      setExpenses(expenseData)
+    try {
+      if (selectedDate) {
+        setExpenses(expenseData.filter((expense) => expense.date === selectedDate))
+      } else {
+        setExpenses(expenseData)
+      }
+    } catch (error) {
+      console.error("Error filtering expenses:", error)
+      setExpenses([])
     }
   }, [selectedDate, expenseData])
 
   useEffect(() => {
-    const total = expenses.reduce((acc, expense) => acc + expense.amount, 0)
-    setTotalExpenses(total)
+    try {
+      const total = expenses.reduce((acc, expense) => acc + (expense.amount || 0), 0)
+      setTotalExpenses(total)
+    } catch (error) {
+      console.error("Error calculating total expenses:", error)
+      setTotalExpenses(0)
+    }
   }, [expenses])
 
   return (
@@ -46,19 +57,30 @@ const ExpenseTable = ({ expenseData }: ExpenseTableProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {expenses.map((expense) => (
-            <TableRow key={expense.id}>
-              <TableCell className="font-medium text-[12px] px-0 sm:text-sm xl:text-base">
-                {format(new Date(expense.date), "dd MMM")}
-              </TableCell>
-              <TableCell className="font-medium text-[12px] px-0 truncate sm:text-sm xl:text-base">
-                {expense.transaction}
-              </TableCell>
-              <TableCell className="text-right text-[12px] sm:text-sm xl:text-base">
-                {convertToCurrency(expense.amount)}
+          {expenses.length > 0 ? (
+            expenses.map((expense) => (
+              <TableRow key={expense.id || Math.random()}>
+                <TableCell className="font-medium text-[12px] px-0 sm:text-sm xl:text-base">
+                  {expense.date ? format(new Date(expense.date), "dd MMM") : "N/A"}
+                </TableCell>
+                <TableCell className="font-medium text-[12px] px-0 truncate sm:text-sm xl:text-base">
+                  {expense.transaction || "Unknown"}{" "}
+                  <span className="hidden font-normal sm:inline-block sm:text-xs sm:text-gray-400 xl:text-sm xl:ml-2">
+                    {expense.category || "Uncategorized"}
+                  </span>
+                </TableCell>
+                <TableCell className="text-right text-[12px] sm:text-sm xl:text-base">
+                  {convertToCurrency(expense.amount || 0)}
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={3} className="text-center text-gray-500">
+                No transactions found
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
