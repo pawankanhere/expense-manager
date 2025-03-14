@@ -6,6 +6,8 @@ import { Expense } from "../page"
 import { format } from "date-fns"
 import { convertToCurrency } from "@/lib/utils"
 import { useSearchParams } from "next/navigation"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
+import { IconFileDescription } from "@tabler/icons-react"
 
 type ExpenseTableProps = {
   expenseData?: Expense[]
@@ -63,11 +65,19 @@ const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
                 <TableCell className="font-medium text-[12px] px-0 sm:text-sm xl:text-base">
                   {expense.date ? format(new Date(expense.date), "dd MMM") : "N/A"}
                 </TableCell>
-                <TableCell className="font-medium text-[12px] px-0 truncate sm:text-sm xl:text-base">
+                <TableCell className="font-medium text-[12px] px-0 truncate sm:text-sm xl:text-base flex items-center gap-1">
                   {expense.transaction || "Unknown"}{" "}
                   <span className="hidden font-normal sm:inline-block sm:text-xs sm:text-gray-400 xl:text-sm xl:ml-2">
                     {expense.category || "Uncategorized"}
                   </span>
+                  {expense.remarks && (
+                    <HoverCard>
+                      <HoverCardTrigger>
+                        <IconFileDescription size={16} className="text-gray-400 hover:text-gray-500" />
+                      </HoverCardTrigger>
+                      <HoverCardContent className="text-sm text-gray-800">Remarks: {expense.remarks}</HoverCardContent>
+                    </HoverCard>
+                  )}
                 </TableCell>
                 <TableCell className="text-right text-[12px] sm:text-sm xl:text-base">
                   {convertToCurrency(expense.amount || 0)}

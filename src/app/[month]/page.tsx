@@ -20,6 +20,7 @@ const HomePage = async () => {
   const dates = generateMonthDates(settings.currentMonth, settings.currentYear)
   const expensesResponse = await getExpenses(settings.currentMonth)
   const expenses: Expense[] = expensesResponse.data
+  console.log("expenses", expenses)
 
   return (
     <div>

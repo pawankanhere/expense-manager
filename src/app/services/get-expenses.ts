@@ -33,7 +33,7 @@ export const getExpenses = async (month: string) => {
         transaction: row[4] || "N/A",
         amount: amountNumber || 0,
         category: row[6] || "N/A",
-        remarks: row[7] || "N/A",
+        remarks: row[7] || "",
       }
     })
     const filteredData = isEmpty(month)
