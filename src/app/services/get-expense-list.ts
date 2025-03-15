@@ -6,7 +6,7 @@ import { getAuth } from "./auth"
 export const getExpenseList = async () => {
   const auth = await getAuth()
   const sheets = google.sheets({ version: "v4", auth })
-  const range = "expense_list!A:E"
+  const range = "expense_list!A:C"
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
     range: range,
@@ -18,8 +18,6 @@ export const getExpenseList = async () => {
       id: row[0],
       transaction: row[1],
       category: row[2],
-      defaultAmount: row[3],
-      isMonthly: JSON.parse(row[4].toLowerCase()),
     }
   })
 
