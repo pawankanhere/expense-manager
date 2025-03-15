@@ -7,7 +7,9 @@ import { format } from "date-fns"
 import { convertToCurrency } from "@/lib/utils"
 import { useSearchParams } from "next/navigation"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
+
 import { IconFileDescription } from "@tabler/icons-react"
+import { sortBy } from "lodash"
 
 type ExpenseTableProps = {
   expenseData?: Expense[]
@@ -24,7 +26,8 @@ const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
       if (selectedDate) {
         setExpenses(expenseData.filter((expense) => expense.date === selectedDate))
       } else {
-        setExpenses(expenseData)
+        const sortedExpenses = sortBy(expenseData, "date")
+        setExpenses(sortedExpenses)
       }
     } catch (error) {
       console.error("Error filtering expenses:", error)
