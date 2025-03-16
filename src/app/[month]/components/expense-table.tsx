@@ -25,7 +25,7 @@ const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
   const selectedDate = searchParams.get("date") || ""
 
   const fuse = new Fuse(expenseData, {
-    keys: ["transaction", "category", "remarks"],
+    keys: ["transaction", "category", "remarks", "date"],
     threshold: 0.3, // Adjust for stricter or looser matches
   })
 
