@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Expense } from "../page"
+import Fuse from "fuse.js"
 import { format } from "date-fns"
 import { convertToCurrency } from "@/lib/utils"
 import { useSearchParams } from "next/navigation"
@@ -10,6 +11,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 
 import { IconFileDescription } from "@tabler/icons-react"
 import { sortBy } from "lodash"
+import { Input } from "@/components/ui/input"
 
 type ExpenseTableProps = {
   expenseData?: Expense[]
@@ -19,21 +21,33 @@ const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
   const [expenses, setExpenses] = useState<Expense[]>(expenseData)
   const [totalExpenses, setTotalExpenses] = useState<number>(0)
   const searchParams = useSearchParams()
+  const [searchQuery, setSearchQuery] = useState("")
   const selectedDate = searchParams.get("date") || ""
 
+  const fuse = new Fuse(expenseData, {
+    keys: ["transaction", "category", "remarks"],
+    threshold: 0.3, // Adjust for stricter or looser matches
+  })
+
   useEffect(() => {
+    let filteredExpenses = expenseData
     try {
       if (selectedDate) {
-        setExpenses(expenseData.filter((expense) => expense.date === selectedDate))
+        filteredExpenses = expenseData.filter((expense) => expense.date === selectedDate)
       } else {
-        const sortedExpenses = sortBy(expenseData, "date")
-        setExpenses(sortedExpenses)
+        filteredExpenses = sortBy(expenseData, "date")
       }
+      if (searchQuery.trim()) {
+        const results = fuse.search(searchQuery)
+        filteredExpenses = results.map((result) => result.item)
+      }
+      setExpenses(filteredExpenses)
     } catch (error) {
       console.error("Error filtering expenses:", error)
       setExpenses([])
     }
-  }, [selectedDate, expenseData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, expenseData, searchQuery])
 
   useEffect(() => {
     try {
@@ -47,11 +61,33 @@ const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
 
   return (
     <div className="my-4 sm:my-6">
-      <div className="flex items-center gap-3">
-        <h3 className="font-semibold sm:text-lg 2xl:text-xl">Transactions Records</h3>
-        <p className="text-gray-600 text-xs sm:text-sm xl:text-base mt-0.5">
+      <div className="flex flex-col sm:hidden items-start gap-1">
+        <div className="flex items-center gap-3">
+          <h3 className="font-semibold w-fit sm:text-lg 2xl:text-xl">Transactions Records</h3>
+          <p className="text-gray-600 w-fit text-xs sm:text-sm xl:text-base mt-0.5">
+            Total: {convertToCurrency(totalExpenses)}
+          </p>
+        </div>
+        <Input
+          type="text"
+          placeholder="Search transactions..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full border rounded-md text-sm"
+        />
+      </div>
+      <div className="hidden sm:grid sm:[grid-template-columns:max-content_130px_1fr] items-center gap-3">
+        <h3 className="font-semibold w-fit sm:text-lg 2xl:text-xl">Transactions Records</h3>
+        <p className="text-gray-600 w-fit text-xs sm:text-sm xl:text-base mt-0.5">
           Total: {convertToCurrency(totalExpenses)}
         </p>
+        <Input
+          type="text"
+          placeholder="Search transactions..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full border rounded-md text-sm"
+        />
       </div>
       <Table className="xl:mt-2">
         <TableHeader>
