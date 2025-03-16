@@ -86,10 +86,10 @@ const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
           placeholder="Search transactions..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full border rounded-md text-sm"
+          className="w-full border rounded-md text-sm lg:h-12 lg:rounded-xl"
         />
       </div>
-      <Table className="xl:mt-2">
+      <Table className="xl:mt-4">
         <TableHeader>
           <TableRow>
             <TableHead className="w-fit px-0 text-xs sm:text-sm xl:text-base">Date</TableHead>

@@ -22,6 +22,7 @@ const Overview = ({ dates = [], expenses = [] }: OverviewProps) => {
     const dailyExpenses = expenses.filter(
       (expense) => expense?.category && !excludeCategories.includes(expense.category)
     )
+    const dailyExpenseTotal = dailyExpenses.reduce((acc, expense) => acc + (expense?.amount || 0), 0)
 
     const updateDateFilter = (newDate: string) => {
       try {
@@ -50,7 +51,12 @@ const Overview = ({ dates = [], expenses = [] }: OverviewProps) => {
     return (
       <>
         <div className="flex justify-between items-center">
-          <h1 className="font-semibold sm:text-lg lg:text-xl">Monthly Overview</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="font-semibold sm:text-lg lg:text-xl">Daily Expenses</h1>
+            <p className="text-gray-600 text-xs mt-0.5 sm:text-sm lg:text-base">
+              Total: {convertToCurrency(dailyExpenseTotal)}
+            </p>
+          </div>
           <Button disabled={!searchParams || !searchParams.has("date")} variant="ghost" onClick={resetFilter}>
             <IconFilter />
             Reset Filters
