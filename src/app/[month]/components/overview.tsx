@@ -49,15 +49,20 @@ const Overview = ({ dates = [], expenses = [] }: OverviewProps) => {
     }
 
     return (
-      <>
+      <div className="border p-4 rounded-xl bg-white shadow shadow-slate-200">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <h1 className="font-semibold sm:text-lg lg:text-xl">Daily Expenses</h1>
+            <h1 className="font-semibold text-sm sm:text-lg lg:text-xl">Daily Expenses</h1>
             <p className="text-gray-600 text-xs mt-0.5 sm:text-sm lg:text-base">
               Total: {convertToCurrency(dailyExpenseTotal)}
             </p>
           </div>
-          <Button disabled={!searchParams || !searchParams.has("date")} variant="ghost" onClick={resetFilter}>
+          <Button
+            className="text-xs sm:text-sm lg:text-base"
+            disabled={!searchParams || !searchParams.has("date")}
+            variant="ghost"
+            onClick={resetFilter}
+          >
             <IconFilter />
             Reset Filters
           </Button>
@@ -106,7 +111,7 @@ const Overview = ({ dates = [], expenses = [] }: OverviewProps) => {
             }
           })}
         </div>
-      </>
+      </div>
     )
   } catch (error) {
     console.error("Error in Overview component:", error)

@@ -60,10 +60,10 @@ const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
   }, [expenses])
 
   return (
-    <div className="my-4 sm:my-6">
+    <div className="my-4 border p-4 rounded-xl bg-white shadow shadow-slate-200">
       <div className="flex flex-col sm:hidden items-start gap-1">
         <div className="flex items-center gap-3">
-          <h3 className="font-semibold w-fit sm:text-lg 2xl:text-xl">Transactions Records</h3>
+          <h3 className="font-semibold text-sm w-fit sm:text-lg 2xl:text-xl">Transactions Records</h3>
           <p className="text-gray-600 w-fit text-xs sm:text-sm xl:text-base mt-0.5">
             Total: {convertToCurrency(totalExpenses)}
           </p>

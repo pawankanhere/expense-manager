@@ -17,12 +17,13 @@ const Navbar = () => {
     router.push(`/${month}`)
   }
   return (
-    <header className="py-4 border-b border-gray-200 flex justify-between items-center w-full">
-      <nav className="w-full">
+    <header className="flex justify-between items-center w-full">
+      <nav className="w-full mt-4 p-4 border rounded-xl bg-white shadow shadow-slate-200">
         <div className="flex justify-between items-center w-full">
           <MonthsDropdown />
           <div className="flex gap-2 items-center">
             <Button
+              variant="secondary"
               onClick={onHomeClick}
               size="sm"
               className="xl:h-12 sm:rounded-lg sm:h-9 xl:px-4 sm:text-sm xl:text-sm xl:rounded-xl"
