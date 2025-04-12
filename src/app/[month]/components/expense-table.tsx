@@ -9,17 +9,27 @@ import { convertToCurrency } from "@/lib/utils"
 import { useSearchParams } from "next/navigation"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 
-import { IconFileDescription } from "@tabler/icons-react"
+import { IconEdit, IconFileDescription } from "@tabler/icons-react"
 import { sortBy } from "lodash"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
 type ExpenseTableProps = {
   expenseData?: Expense[]
+  onEditExpense: (params: { uuid: string; amount: number }) => Promise<{
+    status: number
+    message: string
+  }>
 }
 
-const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
-  const [expenses, setExpenses] = useState<Expense[]>(expenseData)
+const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) => {
+  const [displayedExpenses, setDisplayedExpenses] = useState<Expense[]>(expenseData)
   const [totalExpenses, setTotalExpenses] = useState<number>(0)
+  const [editingExpenseId, setEditingExpenseId] = useState<string | null>(null)
+  // const [editedAmount, setEditedAmount] = useState<number | null>(null)
+  const [currentEditValue, setCurrentEditValue] = useState<string>("") // Store as string for input control
+
   const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = useState("")
   const selectedDate = searchParams.get("date") || ""
@@ -38,26 +48,107 @@ const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
         filteredExpenses = sortBy(expenseData, "date")
       }
       if (searchQuery.trim()) {
+        // const results = fuse.search(searchQuery)
+        // filteredExpenses = results.map((result) => result.item)
         const results = fuse.search(searchQuery)
-        filteredExpenses = results.map((result) => result.item)
+        // Filter the already date-filtered (or sorted) list based on search results
+        const searchResultIds = new Set(results.map((result) => result.item.id))
+        filteredExpenses = filteredExpenses.filter((exp) => exp.id && searchResultIds.has(exp.id))
       }
-      setExpenses(filteredExpenses)
+      setDisplayedExpenses(filteredExpenses)
     } catch (error) {
       console.error("Error filtering expenses:", error)
-      setExpenses([])
+      setDisplayedExpenses([])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, expenseData, searchQuery])
 
   useEffect(() => {
     try {
-      const total = expenses.reduce((acc, expense) => acc + (expense.amount || 0), 0)
+      const total = displayedExpenses.reduce((acc, expense) => acc + (expense.amount || 0), 0)
       setTotalExpenses(total)
     } catch (error) {
       console.error("Error calculating total expenses:", error)
       setTotalExpenses(0)
     }
-  }, [expenses])
+  }, [displayedExpenses])
+  const handleEditClick = (expense: Expense) => {
+    if (!expense.id) return // Cannot edit if no ID
+    setEditingExpenseId(expense.id)
+    // Initialize input value with current amount, formatted as string
+    setCurrentEditValue((expense.amount ?? 0).toString())
+  }
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Allow only numbers and a single decimal point for input
+    const value = e.target.value
+    // Basic validation: allow numbers, one decimal point. Adjust regex as needed.
+    if (/^\d*\.?\d*$/.test(value)) {
+      setCurrentEditValue(value)
+    }
+  }
+
+  const handleSaveEdit = async (expense: Expense) => {
+    if (editingExpenseId === null || !expense.id) return
+
+    const originalAmount = expense.amount ?? 0
+    const newAmount = parseFloat(currentEditValue) // Convert input string to number
+
+    if (isNaN(newAmount) || newAmount < 0) {
+      toast.error("Invalid amount entered.") // Use a toast notification
+      // Optionally reset input to original value or keep editing
+      // setCurrentEditValue(originalAmount.toString());
+      return // Stop if not a valid positive number
+    }
+
+    if (newAmount === originalAmount) {
+      // No change, just exit edit mode
+      setEditingExpenseId(null)
+      setCurrentEditValue("")
+      return
+    }
+
+    // --- Optimistic UI Update ---
+    // 1. Update the local displayedExpenses state immediately
+    const updatedDisplayedExpenses = displayedExpenses.map((e) =>
+      e.id === editingExpenseId ? { ...e, amount: newAmount } : e
+    )
+    setDisplayedExpenses(updatedDisplayedExpenses)
+
+    // 2. Exit edit mode locally
+    setEditingExpenseId(null)
+    setCurrentEditValue("")
+
+    // --- Backend Update ---
+    try {
+      // 3. Call the prop function to update the backend
+      await onEditExpense({ uuid: expense.id, amount: newAmount })
+      toast.success("Expense updated successfully!") // Success feedback
+
+      // Note: If onEditExpense modifies the source `expenseData` in the parent,
+      // the `useEffect` listening to `expenseData` will automatically handle
+      // refreshing the table based on the *actual* new data from the parent.
+      // No need to manually set `expenseData` here.
+    } catch (error) {
+      console.error("Failed to update expense in backend:", error)
+      toast.error("Failed to save changes. Reverting.") // Error feedback
+
+      // --- Rollback Optimistic Update ---
+      // 4. If backend fails, revert the local displayedExpenses state
+      const revertedDisplayedExpenses = displayedExpenses.map((e) =>
+        e.id === expense.id ? { ...e, amount: originalAmount } : e
+      )
+      setDisplayedExpenses(revertedDisplayedExpenses)
+
+      // No need to re-enter edit mode unless desired UX
+    }
+  }
+
+  // Handle canceling edit (e.g., pressing Escape or clicking away)
+  const handleCancelEdit = () => {
+    setEditingExpenseId(null)
+    setCurrentEditValue("")
+  }
 
   return (
     <div className="my-4 border p-4 rounded-xl bg-white shadow shadow-slate-200">
@@ -94,18 +185,18 @@ const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
           <TableRow>
             <TableHead className="w-fit px-0 text-xs sm:text-sm xl:text-base">Date</TableHead>
             <TableHead className="w-[200px] px-0 text-xs sm:text-sm xl:text-base">Transactions</TableHead>
-            <TableHead className="text-right text-xs sm:text-sm xl:text-base">Amount</TableHead>
+            <TableHead className="text-right text-xs sm:text-sm xl:text-base pr-5">Amount</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {expenses.length > 0 ? (
-            expenses.map((expense) => (
+          {displayedExpenses.length > 0 ? (
+            displayedExpenses.map((expense) => (
               <TableRow key={expense.id || Math.random()}>
                 <TableCell className="font-medium text-[12px] px-0 sm:text-sm xl:text-base">
                   {expense.date ? format(new Date(expense.date), "dd MMM") : "N/A"}
                 </TableCell>
                 <TableCell className="font-medium text-[12px] px-0 truncate sm:text-sm xl:text-base flex items-center gap-1">
-                  {expense.transaction || "Unknown"}{" "}
+                  {expense.transaction || "Unknown"}
                   <span className="hidden font-normal sm:inline-block sm:text-xs sm:text-gray-400 xl:text-sm xl:ml-2">
                     {expense.category || "Uncategorized"}
                   </span>
@@ -119,7 +210,40 @@ const ExpenseTable = ({ expenseData = [] }: ExpenseTableProps) => {
                   )}
                 </TableCell>
                 <TableCell className="text-right text-[12px] sm:text-sm xl:text-base">
-                  {convertToCurrency(expense.amount || 0)}
+                  <div className="flex items-center justify-end min-w-[120px] min-h-[24px]">
+                    {editingExpenseId === expense.id ? (
+                      <div className="flex items-center justify-end w-full">
+                        <Input
+                          type="text"
+                          inputMode="decimal"
+                          value={currentEditValue}
+                          onChange={handleEditChange}
+                          onBlur={() => handleSaveEdit(expense)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSaveEdit(expense)
+                            if (e.key === "Escape") handleCancelEdit()
+                          }}
+                          className="w-24 text-right py-0.5 text-xs sm:text-sm h-6"
+                          autoFocus
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-end h-6">
+                        <span>{convertToCurrency(expense.amount || 0)}</span>
+                        {editingExpenseId !== expense.id && (
+                          <Button
+                            className="h-6 w-6 cursor-pointer ml-1 hover:bg-gray-200 p-1"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditClick(expense)}
+                            title="Edit amount"
+                          >
+                            <IconEdit size={14} className="text-gray-500" />
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ))
