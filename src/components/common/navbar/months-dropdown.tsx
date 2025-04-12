@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -19,23 +18,30 @@ import { IconCalendarMonth } from "@tabler/icons-react"
 export function MonthsDropdown() {
   const params = useParams()
   const router = useRouter()
+  const [isLoading, setIsLoading] = React.useState(false)
   const [month, setMonth] = React.useState(params.month as string)
   const changeMonthMutation = useChangeMonth()
 
   const onValueChange = async (value: string) => {
+    if (isLoading) return
+
+    setIsLoading(true)
     try {
       setMonth(value)
-      router.push(`/${value}`)
       await changeMonthMutation.mutateAsync(value)
+      router.push(`/${value}`, { scroll: false })
     } catch (error) {
+      setMonth(params.month as string)
       toast.error("Failed to change month")
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild disabled={isLoading}>
         <Button size="sm" variant="outline" className="xl:text-base sm:text-sm sm:h-9 xl:h-12 xl:rounded-xl">
           <IconCalendarMonth className="text-gray-500 sm:text-base" />
           {capitalize(month)}
