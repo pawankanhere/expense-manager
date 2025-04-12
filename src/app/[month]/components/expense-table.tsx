@@ -6,7 +6,7 @@ import { Expense } from "../page"
 import Fuse from "fuse.js"
 import { format } from "date-fns"
 import { convertToCurrency } from "@/lib/utils"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 
 import { IconEdit, IconFileDescription } from "@tabler/icons-react"
@@ -27,16 +27,16 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
   const [displayedExpenses, setDisplayedExpenses] = useState<Expense[]>(expenseData)
   const [totalExpenses, setTotalExpenses] = useState<number>(0)
   const [editingExpenseId, setEditingExpenseId] = useState<string | null>(null)
-  // const [editedAmount, setEditedAmount] = useState<number | null>(null)
   const [currentEditValue, setCurrentEditValue] = useState<string>("") // Store as string for input control
 
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const selectedDate = searchParams.get("date") || ""
 
   const fuse = new Fuse(expenseData, {
     keys: ["transaction", "category", "remarks", "date"],
-    threshold: 0.3, // Adjust for stricter or looser matches
+    threshold: 0.3,
   })
 
   useEffect(() => {
@@ -48,10 +48,7 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
         filteredExpenses = sortBy(expenseData, "date")
       }
       if (searchQuery.trim()) {
-        // const results = fuse.search(searchQuery)
-        // filteredExpenses = results.map((result) => result.item)
         const results = fuse.search(searchQuery)
-        // Filter the already date-filtered (or sorted) list based on search results
         const searchResultIds = new Set(results.map((result) => result.item.id))
         filteredExpenses = filteredExpenses.filter((exp) => exp.id && searchResultIds.has(exp.id))
       }
@@ -73,16 +70,14 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
     }
   }, [displayedExpenses])
   const handleEditClick = (expense: Expense) => {
-    if (!expense.id) return // Cannot edit if no ID
+    if (!expense.id) return
     setEditingExpenseId(expense.id)
-    // Initialize input value with current amount, formatted as string
     setCurrentEditValue((expense.amount ?? 0).toString())
   }
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Allow only numbers and a single decimal point for input
     const value = e.target.value
-    // Basic validation: allow numbers, one decimal point. Adjust regex as needed.
     if (/^\d*\.?\d*$/.test(value)) {
       setCurrentEditValue(value)
     }
@@ -92,7 +87,7 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
     if (editingExpenseId === null || !expense.id) return
 
     const originalAmount = expense.amount ?? 0
-    const newAmount = parseFloat(currentEditValue) // Convert input string to number
+    const newAmount = parseFloat(currentEditValue)
 
     if (isNaN(newAmount) || newAmount < 0) {
       toast.error("Invalid amount entered.") // Use a toast notification
@@ -109,20 +104,17 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
     }
 
     // --- Optimistic UI Update ---
-    // 1. Update the local displayedExpenses state immediately
     const updatedDisplayedExpenses = displayedExpenses.map((e) =>
       e.id === editingExpenseId ? { ...e, amount: newAmount } : e
     )
     setDisplayedExpenses(updatedDisplayedExpenses)
 
-    // 2. Exit edit mode locally
     setEditingExpenseId(null)
     setCurrentEditValue("")
 
-    // --- Backend Update ---
     try {
-      // 3. Call the prop function to update the backend
       await onEditExpense({ uuid: expense.id, amount: newAmount })
+      router.refresh()
       toast.success("Expense updated successfully!") // Success feedback
 
       // Note: If onEditExpense modifies the source `expenseData` in the parent,
@@ -139,12 +131,9 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
         e.id === expense.id ? { ...e, amount: originalAmount } : e
       )
       setDisplayedExpenses(revertedDisplayedExpenses)
-
-      // No need to re-enter edit mode unless desired UX
     }
   }
 
-  // Handle canceling edit (e.g., pressing Escape or clicking away)
   const handleCancelEdit = () => {
     setEditingExpenseId(null)
     setCurrentEditValue("")
