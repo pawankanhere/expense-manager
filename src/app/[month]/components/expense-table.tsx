@@ -45,7 +45,7 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
       if (selectedDate) {
         filteredExpenses = expenseData.filter((expense) => expense.date === selectedDate)
       } else {
-        filteredExpenses = sortBy(expenseData, "date")
+        filteredExpenses = sortBy(expenseData, "date").reverse()
       }
       if (searchQuery.trim()) {
         const results = fuse.search(searchQuery)
