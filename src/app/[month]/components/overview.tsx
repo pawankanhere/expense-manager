@@ -18,7 +18,7 @@ const Overview = ({ dates = [], expenses = [] }: OverviewProps) => {
   const router = useRouter()
   const searchParams = useSearchParams()
   try {
-    const excludeCategories = ["monthly scheduled", "yearly recurring", "monthly reserved"]
+    const excludeCategories = ["monthly scheduled", "yearly recurring", "monthly reserved", "ignore"]
     const dailyExpenses = expenses.filter(
       (expense) => expense?.category && !excludeCategories.includes(expense.category)
     )
