@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Expense } from "../page"
 import Fuse from "fuse.js"
 import { format } from "date-fns"
 import { convertToCurrency } from "@/lib/utils"
@@ -14,6 +13,7 @@ import { sortBy } from "lodash"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import { Expense } from "../types"
 
 type ExpenseTableProps = {
   expenseData?: Expense[]
@@ -173,7 +173,7 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
         <TableHeader>
           <TableRow>
             <TableHead className="w-fit px-0 text-xs sm:text-sm xl:text-base">Date</TableHead>
-            <TableHead className="w-[200px] px-0 text-xs sm:text-sm xl:text-base">Transactions</TableHead>
+            <TableHead className="w-[150px] truncate px-1 pl-2 text-xs sm:text-sm xl:text-base">Transactions</TableHead>
             <TableHead className="text-right text-xs sm:text-sm xl:text-base pr-5">Amount</TableHead>
           </TableRow>
         </TableHeader>
@@ -181,10 +181,10 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
           {displayedExpenses.length > 0 ? (
             displayedExpenses.map((expense) => (
               <TableRow key={expense.id || Math.random()}>
-                <TableCell className="font-medium text-[12px] px-0 sm:text-sm xl:text-base">
+                <TableCell className="font-medium text-[12px] px-0 items-center sm:text-sm xl:text-base">
                   {expense.date ? format(new Date(expense.date), "dd MMM") : "N/A"}
                 </TableCell>
-                <TableCell className="font-medium text-[12px] px-0 truncate sm:text-sm xl:text-base flex items-center gap-1">
+                <TableCell className="sm:font-medium mt-[3px] text-[12px] px-1 pl-2 truncate sm:text-sm xl:text-base flex items-center gap-1">
                   {expense.transaction || "Unknown"}
                   <span className="hidden font-normal sm:inline-block sm:text-xs sm:text-gray-400 xl:text-sm xl:ml-2">
                     {expense.category || "Uncategorized"}
@@ -199,7 +199,7 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
                   )}
                 </TableCell>
                 <TableCell className="text-right text-[12px] sm:text-sm xl:text-base">
-                  <div className="flex items-center justify-end min-w-[120px] min-h-[24px]">
+                  <div className="flex items-center justify-end min-w-[90px] min-h-[24px]">
                     {editingExpenseId === expense.id ? (
                       <div className="flex items-center justify-end w-full">
                         <Input
