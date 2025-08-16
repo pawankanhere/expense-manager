@@ -1,13 +1,13 @@
 "use client"
 
-import React from "react"
-import { Expense } from "../page"
+import React, { useEffect, useState } from "react"
 import { convertToCurrency, isFutureDate } from "@/lib/utils"
 import { twJoin } from "tailwind-merge"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { IconFilter } from "@tabler/icons-react"
 import { format, parse } from "date-fns"
+import { Expense } from "../types"
 
 type OverviewProps = {
   dates?: string[]
@@ -17,6 +17,26 @@ type OverviewProps = {
 const Overview = ({ dates = [], expenses = [] }: OverviewProps) => {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [mounted, setMounted] = useState(false)
+
+  // Ensure component is mounted before using hooks
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <div className="border p-4 rounded-xl bg-white shadow shadow-slate-200">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <h1 className="font-semibold text-sm sm:text-lg lg:text-xl">Daily Expenses</h1>
+            <p className="text-gray-600 text-xs mt-0.5 sm:text-sm lg:text-base">Loading...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   try {
     const excludeCategories = ["monthly scheduled", "yearly recurring", "monthly reserved", "ignore"]
     const dailyExpenses = expenses.filter(
@@ -96,7 +116,7 @@ const Overview = ({ dates = [], expenses = [] }: OverviewProps) => {
                   disabled={isFuture}
                   className={twJoin(
                     colorClass,
-                    "flex flex-col cursor-pointer font-medium text-[10px] rounded-lg justify-between p-1 px-2 sm:text-sm xl:text-sm xl:font-regular",
+                    "flex flex-col gap-1 sm:gap-2 cursor-pointer font-medium text-[12px] rounded-lg justify-between p-1 px-2 sm:text-sm xl:text-sm xl:font-regular",
                     isFuture && "cursor-none",
                     "h-fit"
                   )}
