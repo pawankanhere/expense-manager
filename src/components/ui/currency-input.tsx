@@ -108,7 +108,7 @@ const CurrencyInput = ({ placeholder, field }: CurrencyInputProps) => {
   return (
     <div className="flex flex-col gap-1">
       <div
-        className={`flex items-center gap-1 border px-2 rounded-md h-9 sm:h-10 md:h-11 ${
+        className={`flex items-center gap-1 border px-2 rounded-md h-12 ${
           !isMathError ? "focus-within:ring-2 focus-within:ring-primary" : ""
         } xl:text-base xl:h-12 ${isMathError ? "border-red-500" : "border-gray-300"}`}
       >

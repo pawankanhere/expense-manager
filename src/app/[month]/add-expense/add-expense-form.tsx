@@ -122,14 +122,16 @@ export function AddExpenseForm() {
                         variant="outline"
                         role="combobox"
                         className={cn(
-                          "w-full text-xs text-gray-700 justify-between sm:text-sm sm:h-10 md:h-11 xl:text-base xl:font-normal xl:h-12",
+                          "w-full text-xs h-12 text-gray-700 justify-between truncate sm:text-sm sm:h-10 md:h-11 xl:text-base xl:font-normal xl:h-12",
                           !field.value && "text-muted-foreground"
                         )}
                       >
                         {field.value ? (
-                          <span className="flex gap-1">
-                            <p>{expenseList?.find((list) => list.transaction === field.value)?.transaction}</p>
-                            <span className="text-gray-400">
+                          <span className="flex gap-1 truncate">
+                            <p className="truncate">
+                              {expenseList?.find((list) => list.transaction === field.value)?.transaction}
+                            </p>
+                            <span className="text-gray-400 flex-shrink-0">
                               -{" "}
                               {
                                 expenseList?.filter((item) => item.transaction === form.watch("transaction"))[0]
@@ -140,13 +142,13 @@ export function AddExpenseForm() {
                         ) : (
                           "Select transaction"
                         )}
-                        <ChevronsUpDown className="opacity-50" />
+                        <ChevronsUpDown className="opacity-50 flex-shrink-0 ml-2" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-full p-0">
-                    <Command className="w-[520px]">
-                      <CommandInput placeholder="Search framework..." className="h-9" />
+                  <PopoverContent className="w-[calc(100vw-2rem)] sm:w-full p-0 max-h-64 overflow-y-auto">
+                    <Command className="w-full">
+                      <CommandInput placeholder="Search transaction..." className="h-9 text-xs sm:text-sm" />
                       <CommandList className="w-full">
                         <CommandEmpty>No framework found.</CommandEmpty>
                         <CommandGroup className="w-full">
@@ -215,7 +217,7 @@ export function AddExpenseForm() {
           type="submit"
         >
           {addExpenseMutation.isPending ? <IconLoader className="animate-spin" /> : <IconPlus />}
-          <span className="ml-2 text-xs sm:text-sm md:text-sm xl:text-base">Add Transaction</span>
+          <span className="ml-1 sm:text-sm md:text-sm xl:text-base">Add Transaction</span>
         </Button>
       </form>
     </Form>
