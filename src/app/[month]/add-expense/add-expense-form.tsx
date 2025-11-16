@@ -80,7 +80,7 @@ export function AddExpenseForm() {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-full pl-3 text-xs text-left font-normal sm:text-sm xl:text-base xl:h-12",
+                        "w-full pl-3 text-xs text-left font-normal sm:text-sm sm:h-10 md:h-11 xl:text-base xl:h-12",
                         !field.value && "text-muted-foreground"
                       )}
                     >
@@ -122,7 +122,7 @@ export function AddExpenseForm() {
                         variant="outline"
                         role="combobox"
                         className={cn(
-                          "w-full text-xs text-gray-700 justify-between sm:text-sm xl:text-base xl:font-normal xl:h-12",
+                          "w-full text-xs text-gray-700 justify-between sm:text-sm sm:h-10 md:h-11 xl:text-base xl:font-normal xl:h-12",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -201,7 +201,7 @@ export function AddExpenseForm() {
             <FormItem className="grow-0 w-full">
               <FormLabel className="sr-only">Remark</FormLabel>
               <FormControl>
-                <Textarea className="sm:text-sm xl:text-base" placeholder="Remarks" {...field} />
+                <Textarea className="text-xs sm:text-sm md:text-sm xl:text-base" placeholder="Remarks" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -210,12 +210,12 @@ export function AddExpenseForm() {
         <Button
           role="button"
           data-testid="add-expense-form-submit-button"
-          className="w-full px-3 sm:h-9 xl:h-12"
+          className="w-full px-3 sm:h-10 md:h-11 xl:h-12"
           disabled={addExpenseMutation.isPending}
           type="submit"
         >
           {addExpenseMutation.isPending ? <IconLoader className="animate-spin" /> : <IconPlus />}
-          <span className="ml-2 text-xs sm:text-sm xl:text-base">Add Transaction</span>
+          <span className="ml-2 text-xs sm:text-sm md:text-sm xl:text-base">Add Transaction</span>
         </Button>
       </form>
     </Form>

@@ -108,11 +108,11 @@ const CurrencyInput = ({ placeholder, field }: CurrencyInputProps) => {
   return (
     <div className="flex flex-col gap-1">
       <div
-        className={`flex items-center gap-1 border px-2 rounded-md h-9 ${
+        className={`flex items-center gap-1 border px-2 rounded-md h-9 sm:h-10 md:h-11 ${
           !isMathError ? "focus-within:ring-2 focus-within:ring-primary" : ""
         } xl:text-base xl:h-12 ${isMathError ? "border-red-500" : "border-gray-300"}`}
       >
-        <IconCurrencyRupee className="h-4 w-4 text-gray-500 xl:h-5 xl:w-5" />
+        <IconCurrencyRupee className="h-4 w-4 text-gray-500 sm:h-5 sm:w-5 xl:h-5 xl:w-5" />
         <Input
           value={inputValue}
           onChange={(e) => {
@@ -129,7 +129,7 @@ const CurrencyInput = ({ placeholder, field }: CurrencyInputProps) => {
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           inputMode="numeric"
-          className="border-0 -ml-2 mb-[2px] focus-visible:ring-0 sm-text-sm font-medium xl:text-base"
+          className="border-0 -ml-2 mb-[2px] focus-visible:ring-0 text-xs sm:text-sm md:text-sm font-medium xl:text-base"
         />
       </div>
       {inputValue.trim().startsWith("=") && livePreview !== null && (

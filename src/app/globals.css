@@ -103,3 +103,29 @@
 html {
   scrollbar-gutter: stable;
 }
+
+/* Mobile-friendly input styles to prevent zoom on focus */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 16px !important;
+  }
+}
+
+/* Prevent auto-zoom on iOS input focus */
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+/* Ensure inputs don't trigger zoom on mobile */
+@supports (padding: max(0px)) {
+  input,
+  textarea,
+  select {
+    padding: max(0.5rem, 1vh) 0.75rem;
+  }
+}
