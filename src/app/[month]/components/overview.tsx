@@ -26,8 +26,8 @@ const Overview = ({ dates = [], expenses = [] }: OverviewProps) => {
 
   if (!mounted) {
     return (
-      <div className="border p-4 rounded-xl bg-white shadow shadow-slate-200">
-        <div className="flex justify-between items-center">
+      <div className="border-0 sm:border p-0 sm:p-4 rounded-none sm:rounded-xl bg-white shadow-none sm:shadow sm:shadow-slate-200">
+        <div className="flex justify-between items-center p-4 sm:p-0">
           <div className="flex items-center gap-2">
             <h1 className="font-semibold text-sm sm:text-lg lg:text-xl">Daily Expenses</h1>
             <p className="text-gray-600 text-xs mt-0.5 sm:text-sm lg:text-base">Loading...</p>
@@ -69,8 +69,8 @@ const Overview = ({ dates = [], expenses = [] }: OverviewProps) => {
     }
 
     return (
-      <div className="border p-4 rounded-xl bg-white shadow shadow-slate-200">
-        <div className="flex justify-between items-center">
+      <div className="border-0 sm:border p-0 sm:p-4 rounded-none sm:rounded-xl bg-white shadow-none sm:shadow sm:shadow-slate-200">
+        <div className="flex justify-between items-center p-4 sm:p-0">
           <div className="flex items-center gap-2">
             <h1 className="font-semibold text-sm sm:text-lg lg:text-xl">Daily Expenses</h1>
             <p className="text-gray-600 text-xs mt-0.5 sm:text-sm lg:text-base">
@@ -87,7 +87,7 @@ const Overview = ({ dates = [], expenses = [] }: OverviewProps) => {
             Reset Filters
           </Button>
         </div>
-        <div className="grid grid-cols-4 md:grid-cols-7 gap-1 mt-2 2xl:mt-4">
+        <div className="grid grid-cols-4 md:grid-cols-7 gap-1 mt-2 2xl:mt-4 p-4 sm:p-0">
           {dates.map((date) => {
             try {
               const filteredExpenses = dailyExpenses.filter((expense) => {

@@ -18,8 +18,8 @@ const Navbar = () => {
   }
   return (
     <header className="flex justify-between items-center w-full">
-      <nav className="w-full mt-4 p-4 border rounded-xl bg-white shadow shadow-slate-200">
-        <div className="flex justify-between items-center w-full">
+      <nav className="w-full mt-0 sm:mt-4 p-0 sm:p-4 border-0 sm:border rounded-none sm:rounded-xl bg-white shadow-none sm:shadow sm:shadow-slate-200">
+        <div className="flex justify-between items-center w-full p-4 sm:p-0">
           <MonthsDropdown />
           <div className="flex gap-2 items-center">
             <Button

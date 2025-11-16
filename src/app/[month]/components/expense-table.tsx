@@ -140,11 +140,11 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
   }
 
   return (
-    <div className="my-4 border p-4 rounded-xl bg-white shadow shadow-slate-200">
-      <div className="flex flex-col sm:hidden items-start gap-1">
+    <div className="my-0 sm:my-4 border-0 sm:border p-0 sm:p-4 rounded-none sm:rounded-xl bg-white shadow-none sm:shadow sm:shadow-slate-200 overflow-hidden">
+      <div className="flex flex-col sm:hidden items-start gap-1 p-4 pb-2">
         <div className="flex items-center gap-3">
-          <h3 className="font-semibold text-sm w-fit sm:text-lg 2xl:text-xl">Transactions Records</h3>
-          <p className="text-gray-600 w-fit text-xs sm:text-sm xl:text-base mt-0.5">
+          <h3 className="font-semibold text-base w-fit sm:text-lg 2xl:text-xl">Transactions Records</h3>
+          <p className="text-gray-600 w-fit text-sm sm:text-sm xl:text-base mt-0.5">
             Total: {convertToCurrency(totalExpenses)}
           </p>
         </div>
@@ -153,10 +153,10 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
           placeholder="Search transactions..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full border rounded-md text-sm"
+          className="w-full border rounded-lg text-sm h-12"
         />
       </div>
-      <div className="hidden sm:grid sm:[grid-template-columns:max-content_130px_1fr] items-center gap-3">
+      <div className="hidden sm:grid sm:[grid-template-columns:max-content_130px_1fr] items-center gap-3 p-4 pb-2">
         <h3 className="font-semibold w-fit sm:text-lg 2xl:text-xl">Transactions Records</h3>
         <p className="text-gray-600 w-fit text-xs sm:text-sm xl:text-base mt-0.5">
           Total: {convertToCurrency(totalExpenses)}
@@ -169,82 +169,93 @@ const ExpenseTable = ({ expenseData = [], onEditExpense }: ExpenseTableProps) =>
           className="w-full border rounded-md text-sm lg:h-12 lg:rounded-xl"
         />
       </div>
-      <Table className="xl:mt-4">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-fit px-0 text-xs sm:text-sm xl:text-base">Date</TableHead>
-            <TableHead className="w-[150px] truncate px-1 pl-2 text-xs sm:text-sm xl:text-base">Transactions</TableHead>
-            <TableHead className="text-right text-xs sm:text-sm xl:text-base pr-5">Amount</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {displayedExpenses.length > 0 ? (
-            displayedExpenses.map((expense) => (
-              <TableRow key={expense.id || Math.random()}>
-                <TableCell className="font-medium text-[12px] px-0 items-center sm:text-sm xl:text-base">
-                  {expense.date ? format(new Date(expense.date), "dd MMM") : "N/A"}
-                </TableCell>
-                <TableCell className="sm:font-medium mt-[3px] text-[12px] px-1 pl-2 truncate sm:text-sm xl:text-base flex items-center gap-1">
-                  {expense.transaction || "Unknown"}
-                  <span className="hidden font-normal sm:inline-block sm:text-xs sm:text-gray-400 xl:text-sm xl:ml-2">
-                    {expense.category || "Uncategorized"}
-                  </span>
-                  {expense.remarks && (
-                    <HoverCard>
-                      <HoverCardTrigger>
-                        <IconFileDescription size={16} className="text-gray-400 hover:text-gray-500" />
-                      </HoverCardTrigger>
-                      <HoverCardContent className="text-sm text-gray-800">Remarks: {expense.remarks}</HoverCardContent>
-                    </HoverCard>
-                  )}
-                </TableCell>
-                <TableCell className="text-right text-[12px] sm:text-sm xl:text-base">
-                  <div className="flex items-center justify-end min-w-[90px] min-h-[24px]">
-                    {editingExpenseId === expense.id ? (
-                      <div className="flex items-center justify-end w-full">
-                        <Input
-                          type="text"
-                          inputMode="decimal"
-                          value={currentEditValue}
-                          onChange={handleEditChange}
-                          onBlur={() => handleSaveEdit(expense)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") handleSaveEdit(expense)
-                            if (e.key === "Escape") handleCancelEdit()
-                          }}
-                          className="w-24 text-right py-0.5 text-xs sm:text-sm h-6"
-                          autoFocus
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-end h-6">
-                        <span>{convertToCurrency(expense.amount || 0)}</span>
-                        {editingExpenseId !== expense.id && (
-                          <Button
-                            className="h-6 w-6 cursor-pointer ml-1 hover:bg-gray-200 p-1"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEditClick(expense)}
-                            title="Edit amount"
-                          >
-                            <IconEdit size={14} className="text-gray-500" />
-                          </Button>
-                        )}
-                      </div>
-                    )}
-                  </div>
+      <div className="overflow-hidden">
+        <Table className="xl:mt-4 w-full table-fixed">
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="px-4 py-2 text-sm xl:text-base font-medium text-left w-20">Date</TableHead>
+              <TableHead className="px-4 py-2 text-sm xl:text-base font-medium text-left flex-1">
+                Transactions
+              </TableHead>
+              <TableHead className="text-right px-4 py-2 text-sm xl:text-base font-medium w-20">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {displayedExpenses.length > 0 ? (
+              displayedExpenses.map((expense) => (
+                <TableRow key={expense.id || Math.random()} className="hover:bg-gray-50">
+                  <TableCell className="font-medium text-sm xl:text-base px-4 py-3 w-20">
+                    {expense.date ? format(new Date(expense.date), "dd MMM") : "N/A"}
+                  </TableCell>
+                  <TableCell className="sm:font-medium text-sm xl:text-base px-4 py-3 min-w-0">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="truncate">{expense.transaction || "Unknown"}</span>
+                      <span className="hidden font-normal sm:inline-block sm:text-xs sm:text-gray-400 xl:text-sm flex-shrink-0">
+                        {expense.category || "Uncategorized"}
+                      </span>
+                      {expense.remarks && (
+                        <HoverCard>
+                          <HoverCardTrigger>
+                            <IconFileDescription
+                              size={16}
+                              className="text-gray-400 hover:text-gray-500 flex-shrink-0"
+                            />
+                          </HoverCardTrigger>
+                          <HoverCardContent className="text-sm text-gray-800">
+                            Remarks: {expense.remarks}
+                          </HoverCardContent>
+                        </HoverCard>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right text-sm xl:text-base px-4 py-3 w-20">
+                    <div className="flex items-center justify-end gap-1">
+                      {editingExpenseId === expense.id ? (
+                        <div className="flex items-center justify-end">
+                          <Input
+                            type="text"
+                            inputMode="decimal"
+                            value={currentEditValue}
+                            onChange={handleEditChange}
+                            onBlur={() => handleSaveEdit(expense)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleSaveEdit(expense)
+                              if (e.key === "Escape") handleCancelEdit()
+                            }}
+                            className="w-20 text-right py-0.5 text-sm sm:text-sm h-8"
+                            autoFocus
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          <span>{convertToCurrency(expense.amount || 0)}</span>
+                          {editingExpenseId !== expense.id && (
+                            <Button
+                              className="h-6 w-6 cursor-pointer hover:bg-gray-200 p-0.5 ml-1"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEditClick(expense)}
+                              title="Edit amount"
+                            >
+                              <IconEdit size={14} className="text-gray-500" />
+                            </Button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={3} className="text-center text-gray-500 py-6">
+                  No transactions found
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={3} className="text-center text-gray-500">
-                No transactions found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }
