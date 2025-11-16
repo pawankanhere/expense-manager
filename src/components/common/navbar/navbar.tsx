@@ -26,18 +26,20 @@ const Navbar = () => {
               variant="secondary"
               onClick={onHomeClick}
               size="sm"
-              className="xl:h-12 sm:rounded-lg sm:h-9 xl:px-4 sm:text-sm xl:text-sm xl:rounded-xl"
+              className="xl:h-12 sm:rounded-lg sm:h-9 xl:px-4 sm:text-sm xl:text-sm xl:rounded-xl sm:p-2 xl:p-4"
+              title="Home"
             >
-              <IconHome />
-              Home
+              <IconHome className="sm:block xl:hidden" />
+              <span className="hidden xl:inline">Home</span>
             </Button>
             <Button
               onClick={onAddExpenseClick}
               size="sm"
-              className="xl:h-12 sm:rounded-lg sm:h-9 xl:px-4 sm:text-sm xl:text-sm xl:rounded-xl"
+              className="xl:h-12 sm:rounded-lg sm:h-9 xl:px-4 sm:text-sm xl:text-sm xl:rounded-xl sm:p-2 xl:p-4"
+              title="Add Expense"
             >
-              <IconCalendarDollar />
-              Add Expense
+              <IconCalendarDollar className="sm:block xl:hidden" />
+              <span className="hidden xl:inline">Add Expense</span>
             </Button>
           </div>
         </div>

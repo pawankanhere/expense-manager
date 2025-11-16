@@ -36,7 +36,6 @@ export function AddExpenseForm() {
   const expenseListQuery = useGetExpenseList()
   const expenseList = expenseListQuery.data?.data
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
-  console.log("expenseList", expenseList)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
